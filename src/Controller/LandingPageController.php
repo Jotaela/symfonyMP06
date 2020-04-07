@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App;
+namespace App\Controller;
 
 
 use Symfony\Component\HttpFoundation\Response;
@@ -14,5 +14,11 @@ class LandingPageController
      */
     public function index() {
         return new Response('hola amiguis');
+    }
+    /**
+     * @Route("/canal/{channel}")
+     */
+    public function prova() {
+        return new Response(sprintf('queloque friendo %s', channel));
     }
 }

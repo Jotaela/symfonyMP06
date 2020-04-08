@@ -18,7 +18,7 @@ class LandingPageController
     /**
      * @Route("/canal/{channel}")
      */
-    public function prova() {
-        return new Response(sprintf('queloque friendo %s', channel));
+    public function prova($channel) {
+        return new Response(sprintf('queloque friendo %s', $channel));
     }
 }

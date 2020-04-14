@@ -1,8 +1,10 @@
 <template>
-    <h1>hola</h1>
+    <div>
+        <p>This is an example of a new components in VueJs</p>
+    </div>
 </template>
 <script>
-export default {
-    name: 'LandingPage'
-}
+    export default {
+        name: "LandingPage"
+    }
 </script>

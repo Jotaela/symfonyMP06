@@ -1,13 +1,16 @@
-import '../css/app.css';
 import Vuex from 'vuex'
 import VueRouter from 'vue-router'
 import './bootstrap'
 import Vue from 'vue'
 import App from './layouts/App'
 import store from './store'
+import vuetify from './plugins/vuetify'
+import eventBusCli from './plugins/eventBus.client'
+import confirm from './plugins/confirm'
 
 window.Vue = Vue
 window.Vue.use(Vuex)
+window.Vue.use(confirm, { vuetify })
 window.Vue.use(VueRouter)
 
 /**
@@ -21,7 +24,9 @@ window.Vue.use(VueRouter)
 // const files = require.context('./', true, /\.vue$/i)
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
 
-window.Vue.component('page', () => import('./pages/LandingPage' /* webpackChunkName: "channels" */))
+window.Vue.component('page', () => import('./components/Page' /* webpackChunkName: "channels" */))
+window.Vue.component('landing-page', () => import('./pages/LandingPage' /* webpackChunkName: "landing-page" */))
+window.Vue.component('animals', () => import('./pages/Animals' /* webpackChunkName: "animals" */))
 window.Vue.component('App', () => import('./layouts/App' /* webpackChunkName: "App" */))
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -34,6 +39,5 @@ const app = new Vue({
     el: '#app',
     store,
     vuetify,
-    eventBusCli,
-    snackbarCli
+    eventBusCli
 })

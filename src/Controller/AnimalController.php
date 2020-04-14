@@ -7,21 +7,30 @@ use http\Env\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\Encoder\XmlEncoder;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class AnimalController extends AbstractController
 {
     /**
-     * @Route("/api/animal", methods={"GET"})
+     * @Route("/api/animals", methods={"GET"})
      */
     public function index(): JsonResponse
     {
+
+        $encoders = [new XmlEncoder(), new JsonEncoder()];
+        $normalizers = [new ObjectNormalizer()];
+        $serializer = new Serializer($normalizers, $encoders);
+
         $repository  = $this->getDoctrine()->getManager()->getRepository(Animal::class);
-        return new JsonResponse($repository->findAll());
+        return new JsonResponse(json_decode($serializer->serialize($repository->findAll(), 'json')));
     }
 
     /**
-     * @Route("/api/animal/{id}", methods={"GET"})
+     * @Route("/api/animals/{id}", methods={"GET"})
      */
     public function show($id)
     {
@@ -37,7 +46,7 @@ class AnimalController extends AbstractController
     }
 
     /**
-     * @Route("/api/animal", methods={"POST"})
+     * @Route("/api/animals", methods={"POST"})
      */
     public function push(ValidatorInterface $validator, Animal $animal): Response
     {
@@ -58,7 +67,7 @@ class AnimalController extends AbstractController
     }
 
     /**
-     * @Route("/api/animal/{id}", methods={"PUT"})
+     * @Route("/api/animals/{id}", methods={"PUT"})
      */
     public function update(ValidatorInterface $validator, $id)
     {
@@ -77,5 +86,27 @@ class AnimalController extends AbstractController
         $entityManager->flush();
 
         return new Response('Saved new product with id '.$product->getId());
+    }
+
+    /**
+     * @Route("/api/animals/{animal}", methods={"DELETE"})
+     * @param Animal $animal
+     * @return JsonResponse
+     */
+    public function destroy(Animal $animal)
+    {
+        $encoders = [new XmlEncoder(), new JsonEncoder()];
+        $normalizers = [new ObjectNormalizer()];
+        $serializer = new Serializer($normalizers, $encoders);
+
+        $entityManager = $this->getDoctrine()->getManager();
+
+        // tell Doctrine you want to (eventually) save the Product (no queries yet)
+        $entityManager->remove($animal);
+
+        // actually executes the queries (i.e. the INSERT query)
+        $entityManager->flush();
+
+        return new JsonResponse(json_decode($serializer->serialize($animal, 'json')));
     }
 }

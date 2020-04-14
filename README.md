@@ -1,5 +1,7 @@
 Start server:
 
-    php -S 127.0.0.1:8000 -t public/
     synfony serve
    
+Compilar js:
+
+    yarn encore dev

@@ -6,11 +6,13 @@ use App\Entity\Animal;
 use http\Env\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Encoder\XmlEncoder;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
+use Symfony\Component\Validator\Constraints\Json;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class AnimalController extends AbstractController
@@ -30,62 +32,81 @@ class AnimalController extends AbstractController
     }
 
     /**
-     * @Route("/api/animals/{id}", methods={"GET"})
+     * @Route("/api/animals/{animal}", methods={"GET"})
+     * @param Animal $animal
+     * @return JsonResponse
      */
-    public function show($id)
+    public function show(Animal $animal)
     {
-        $animal = $this->getDoctrine()
-            ->getRepository(Animal::class)
-            ->find($id);
+        $encoders = [new XmlEncoder(), new JsonEncoder()];
+        $normalizers = [new ObjectNormalizer()];
+        $serializer = new Serializer($normalizers, $encoders);
 
-        if (!$animal) {
-            return new JsonResponse([404]);
-        }
-
-        return new JsonResponse($animal);
+        return new JsonResponse(json_decode($serializer->serialize($animal, 'json')));
     }
 
     /**
      * @Route("/api/animals", methods={"POST"})
+     * @param ValidatorInterface $validator
+     * @param Request $request
+     * @return JsonResponse
      */
-    public function push(ValidatorInterface $validator, Animal $animal): Response
+    public function push(Request $request, ValidatorInterface $validator): JsonResponse
     {
 
-        $entityManager = $this->getDoctrine()->getManager();
+        $encoders = [new XmlEncoder(), new JsonEncoder()];
+        $normalizers = [new ObjectNormalizer()];
+        $serializer = new Serializer($normalizers, $encoders);
 
-        $errors = $validator->validate($animal);
+        $entityManager = $this->getDoctrine()->getManager();
+        $animalRequest = json_decode($request->getContent());
+
+        $nouAnimal = new Animal();
+        $nouAnimal->setName($animalRequest->name);
+        $nouAnimal->setEspecie($animalRequest->especie);
+        $nouAnimal->setAltura($animalRequest->altura);
+        $nouAnimal->setPes($animalRequest->pes);
+
+        $errors = $validator->validate($nouAnimal);
         if (count($errors) > 0) {
-            return new Response((string) $errors, 400);
+            return new JsonResponse((string) $errors, 400);
         }
 
-        $entityManager->persist($animal);
+        $entityManager->persist($nouAnimal);
 
         $entityManager->flush();
 
-
-        return new Response($animal);
+        return new JsonResponse(json_decode($serializer->serialize($nouAnimal, 'json')));
     }
 
     /**
-     * @Route("/api/animals/{id}", methods={"PUT"})
+     * @Route("/api/animals/{animal}", methods={"PUT"})
+     * @param Animal $animal
+     * @param Request $request
+     * @param ValidatorInterface $validator
+     * @return JsonResponse
      */
-    public function update(ValidatorInterface $validator, $id)
+    public function update(Animal $animal, Request $request, ValidatorInterface $validator)
     {
-        // you can fetch the EntityManager via $this->getDoctrine()
-        // or you can add an argument to the action: createProduct(EntityManagerInterface $entityManager)
+        $encoders = [new XmlEncoder(), new JsonEncoder()];
+        $normalizers = [new ObjectNormalizer()];
+        $serializer = new Serializer($normalizers, $encoders);
+
         $entityManager = $this->getDoctrine()->getManager();
+        $animalRequest = json_decode($request->getContent());
 
-        $animal = new Animal();
-        $animal->setName('Keyboard');
-
+        $animal->setName($animalRequest->name);
+        $animal->setEspecie($animalRequest->especie);
+        $animal->setAltura($animalRequest->altura);
+        $animal->setPes($animalRequest->pes);
 
         // tell Doctrine you want to (eventually) save the Product (no queries yet)
-        $entityManager->persist($product);
+        $entityManager->persist($animal);
 
         // actually executes the queries (i.e. the INSERT query)
         $entityManager->flush();
 
-        return new Response('Saved new product with id '.$product->getId());
+        return new JsonResponse(json_decode($serializer->serialize($animal, 'json')));
     }
 
     /**

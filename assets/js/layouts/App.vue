@@ -70,9 +70,8 @@ export default {
       drawerLeft: true,
       drawerRight: false,
       leftItems: [
-        { icon: 'home', text: 'Home', to: '/home'},
-        { icon: 'list', text: 'Channels', to: '/channels'},
-        { icon: 'list', text: 'Channels DT', to: '/channels_dt'},
+        { icon: 'list', text: 'Animals', to: '/animals'},
+        { icon: 'list', text: 'Habitats', to: '/habitats'},
       ],
       users: []
     }

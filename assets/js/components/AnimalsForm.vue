@@ -4,6 +4,7 @@
     :updatedAnimal="updatedAnimal"
     :show="show"
     :loading="loading"
+    :habitats="habitats"
     @submited="submit"
     @toggled="toggle"
   />
@@ -26,9 +27,18 @@ export default {
           name: '',
           especie: '',
           altura: '',
-          pes: ''
+          pes: '',
+          habitats: []
         }
       }
+    }
+  },
+  created() {
+    this.$store.dispatch('habitats/' + types.HABITATS_REFRESH)
+  },
+  computed: {
+    habitats() {
+      return this.$store.getters['habitats/list']
     }
   },
   data () {
@@ -40,7 +50,8 @@ export default {
         name: this.animal.name,
         especie: this.animal.especie,
         altura: this.animal.altura,
-        pes: this.animal.pes
+        pes: this.animal.pes,
+        habitats: this.animal.habitats
       }
     }
   },
@@ -73,7 +84,8 @@ export default {
         name: this.animal.name,
         especie: this.animal.especie,
         altura: this.animal.altura,
-        pes: this.animal.pes
+        pes: this.animal.pes,
+        habitats: this.animal.habitats
       }
     }
   }

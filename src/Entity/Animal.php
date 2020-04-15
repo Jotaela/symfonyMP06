@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -35,6 +37,16 @@ class Animal
      * @ORM\Column(type="integer", nullable=true)
      */
     private $altura;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Habitat", mappedBy="animals")
+     */
+    private $habitats;
+
+    public function __construct()
+    {
+        $this->habitats = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -85,6 +97,34 @@ class Animal
     public function setAltura(?int $altura): self
     {
         $this->altura = $altura;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Habitat[]
+     */
+    public function getHabitats(): Collection
+    {
+        return $this->habitats;
+    }
+
+    public function addHabitat(Habitat $habitat): self
+    {
+        if (!$this->habitats->contains($habitat)) {
+            $this->habitats[] = $habitat;
+            $habitat->addAnimal($this);
+        }
+
+        return $this;
+    }
+
+    public function removeHabitat(Habitat $habitat): self
+    {
+        if ($this->habitats->contains($habitat)) {
+            $this->habitats->removeElement($habitat);
+            $habitat->removeAnimal($this);
+        }
 
         return $this;
     }

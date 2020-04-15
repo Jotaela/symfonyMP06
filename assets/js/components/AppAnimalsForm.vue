@@ -28,11 +28,21 @@
               v-model="updatedAnimal.pes"
               label="Pes de l'animal"
             />
+            <v-autocomplete
+              v-model="updatedAnimal.habitats"
+              :items="habitats"
+              item-text="nom"
+              dense
+              chips
+              label="Habitats"
+              multiple
+            />
           </v-form>
         </v-container>
         <v-card-actions>
           <v-btn :loading="loading" @click="submit(animal, updatedAnimal)" :disabled="!valid" color="primary">
-            <v-icon>edit</v-icon>
+            <v-icon v-if="animal.id == 0">add</v-icon>
+            <v-icon v-else>edit</v-icon>
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -57,8 +67,12 @@
   </span>
 </template>
 <script>
+import AppChipsHabitats from './AppChipsHabitats'
 export default {
   name: 'AppAnimalsForm',
+  components: {
+    'app-chips-habitats': AppChipsHabitats
+  },
   props: {
     animal: {
       type: Object,
@@ -75,6 +89,10 @@ export default {
     show: {
       type: Boolean,
       required: true
+    },
+    habitats: {
+      type: Array,
+      required: true
     }
   },
   data () {
@@ -88,7 +106,11 @@ export default {
   methods: {
     submit (animal, updatedAnimal) {
       this.$emit('submited', animal, updatedAnimal)
+    },
+    eliminar (habitat) {
+      this.updatedAnimal.habitat.splice(this.updatedAnimal.habitat.indexOf(habitat), 1)
     }
+
   }
 }
 </script>

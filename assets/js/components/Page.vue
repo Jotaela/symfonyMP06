@@ -19,6 +19,7 @@ export default {
     const module = this.state.module.toLowerCase()
     this.$store.commit(mutationTypes.SET_MODULE, module)
     const mutation = module + '/SET_' + this.state.module.toUpperCase() + '_STATE'
+    console.log(mutation)
     this.$store.commit(mutation, this.state.state)
   }
 }

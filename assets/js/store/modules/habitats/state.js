@@ -1,5 +1,4 @@
 const state = {
-  list: [],
-  users: []
+  list: []
 }
 export default state

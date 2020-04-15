@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import animals from './modules/animals'
-import messages from './modules/messages'
+import habitats from './modules/habitats'
 
 import state from './state'
 import mutations from './mutations'
@@ -15,7 +15,7 @@ export default new Vuex.Store({
   strict: debug,
   modules: {
     animals,
-    messages
+    habitats
   },
   state,
   mutations,

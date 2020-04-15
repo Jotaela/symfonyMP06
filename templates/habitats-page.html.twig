@@ -1,8 +1,10 @@
 {% extends 'base.html.twig' %}
 {% block title %}
-    Landing Page
+    Habitats
 {% endblock %}
 
 {% block body %}
-    <landing-page></landing-page>
+    <page :state="{{ state }}">
+        <habitats></habitats>
+    </page>
 {% endblock %}

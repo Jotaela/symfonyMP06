@@ -1,6 +1,6 @@
 <template>
   <div>
-    <channels-form/>
+    <animals-form/>
     <animals-list />
   </div>
 </template>
@@ -11,7 +11,7 @@ export default {
   name: 'Animals',
   components: {
     'animals-list': AnimalsList,
-    'channels-form': AnimalsForm
+    'animals-form': AnimalsForm
   }
 }
 </script>

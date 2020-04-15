@@ -27,6 +27,7 @@ window.Vue.use(VueRouter)
 window.Vue.component('page', () => import('./components/Page' /* webpackChunkName: "channels" */))
 window.Vue.component('landing-page', () => import('./pages/LandingPage' /* webpackChunkName: "landing-page" */))
 window.Vue.component('animals', () => import('./pages/Animals' /* webpackChunkName: "animals" */))
+window.Vue.component('habitats', () => import('./pages/Habitats' /* webpackChunkName: "habitats" */))
 window.Vue.component('App', () => import('./layouts/App' /* webpackChunkName: "App" */))
 /**
  * Next, we will create a fresh Vue application instance and attach it to

@@ -128,4 +128,13 @@ class Animal
 
         return $this;
     }
+
+    public function removeAllHabitats(): self
+    {
+        foreach ($this->getHabitats() as $habitat) {
+            $this->removeHabitat($habitat);
+        }
+
+        return $this;
+    }
 }

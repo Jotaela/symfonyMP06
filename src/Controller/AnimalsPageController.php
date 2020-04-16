@@ -31,8 +31,12 @@ class AnimalsPageController extends AbstractController
                 'list' => $animals
             ]
         ];
-        return $this->render('animals-page.html.twig', [
-            'state' => $serializer->serialize($state, 'json')
+        return $this->render('animals-page.html.twig'  , [
+            'state' => $serializer->serialize($state, 'json', [
+                'circular_reference_handler' => function ($object) {
+                    return $object->getId();
+                }
+            ])
         ]);
     }
 }

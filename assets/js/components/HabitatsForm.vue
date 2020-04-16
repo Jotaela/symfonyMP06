@@ -4,6 +4,7 @@
     :updatedHabitat="updatedHabitat"
     :show="show"
     :loading="loading"
+    :animals="animals"
     @submited="submit"
     @toggled="toggle"
   />
@@ -23,10 +24,16 @@ export default {
       default: () => {
         return {
           id: 0,
-          nom: '',
-          descripcio: ''
+          name: '',
+          descripcio: '',
+          animals: []
         }
       }
+    }
+  },
+  computed: {
+    animals() {
+      return this.$store.getters['animals/list']
     }
   },
   data () {
@@ -37,6 +44,7 @@ export default {
         id: this.habitat.id,
         nom: this.habitat.nom,
         descripcio: this.habitat.descripcio,
+        animals: this.habitat.animals
       }
     }
   },
@@ -46,6 +54,7 @@ export default {
         this.loading = true
         if (habitat.id === 0) {
           await this.$store.dispatch('habitats/' + types.HABITAT_STORE, newHabitat)
+          this.initHabitat()
         } else {
           const props = {
             habitat,
@@ -54,7 +63,6 @@ export default {
           await this.$store.dispatch('habitats/' + types.HABITAT_UPDATE, props)
         }
         this.toggle()
-        this.initHabitat()
       } catch (error) {
         console.log(error)
       }
@@ -65,9 +73,10 @@ export default {
     },
     initHabitat () {
       this.updatedHabitat = {
-        id: this.habitat.id,
-        name: this.habitat.name,
-        descripcio: this.habitat.descripcio
+        id: 0,
+        name: '',
+        descripcio: '',
+        animals: []
       }
     }
   }

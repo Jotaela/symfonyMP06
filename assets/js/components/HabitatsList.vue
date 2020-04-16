@@ -23,6 +23,9 @@ export default {
       loadingList: false
     }
   },
+  created() {
+    this.$store.dispatch('animals/' + actions.ANIMALS_REFRESH)
+  },
   computed: {
     habitats () {
       return this.$store.getters['habitats/list']

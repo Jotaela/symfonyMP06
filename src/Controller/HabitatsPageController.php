@@ -32,7 +32,11 @@ class HabitatsPageController extends AbstractController
             ]
         ];
         return $this->render('habitats-page.html.twig', [
-            'state' => $serializer->serialize($state, 'json')
+            'state' => $serializer->serialize($state, 'json', [
+                'circular_reference_handler' => function ($object) {
+                    return $object->getId();
+                }
+            ])
         ]);
     }
 }

@@ -3,6 +3,8 @@
 namespace App\Controller;
 
 use App\Entity\Animal;
+use App\Entity\Habitat;
+use App\Repository\AnimalRepository;
 use http\Env\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -19,16 +21,21 @@ class AnimalController extends AbstractController
 {
     /**
      * @Route("/api/animals", methods={"GET"})
+     * @param AnimalRepository $repository
+     * @return JsonResponse
      */
-    public function index(): JsonResponse
+    public function index(AnimalRepository $repository): JsonResponse
     {
 
         $encoders = [new XmlEncoder(), new JsonEncoder()];
         $normalizers = [new ObjectNormalizer()];
         $serializer = new Serializer($normalizers, $encoders);
 
-        $repository  = $this->getDoctrine()->getManager()->getRepository(Animal::class);
-        return new JsonResponse(json_decode($serializer->serialize($repository->findAll(), 'json')));
+        return new JsonResponse(json_decode($serializer->serialize($repository->findAll(), 'json', [
+            'circular_reference_handler' => function ($object) {
+                return $object->getId();
+            }
+        ])));
     }
 
     /**
@@ -42,16 +49,21 @@ class AnimalController extends AbstractController
         $normalizers = [new ObjectNormalizer()];
         $serializer = new Serializer($normalizers, $encoders);
 
-        return new JsonResponse(json_decode($serializer->serialize($animal, 'json')));
+        return new JsonResponse(json_decode($serializer->serialize($animal, 'json', [
+            'circular_reference_handler' => function ($object) {
+                return $object->getId();
+            }
+        ])));
     }
 
     /**
      * @Route("/api/animals", methods={"POST"})
-     * @param ValidatorInterface $validator
      * @param Request $request
+     * @param ValidatorInterface $validator
+     * @param AnimalRepository $repository
      * @return JsonResponse
      */
-    public function push(Request $request, ValidatorInterface $validator): JsonResponse
+    public function push(Request $request, ValidatorInterface $validator, AnimalRepository $repository): JsonResponse
     {
 
         $encoders = [new XmlEncoder(), new JsonEncoder()];
@@ -66,6 +78,10 @@ class AnimalController extends AbstractController
         $nouAnimal->setEspecie($animalRequest->especie);
         $nouAnimal->setAltura($animalRequest->altura);
         $nouAnimal->setPes($animalRequest->pes);
+        foreach  ($animalRequest->habitats as $habitat){
+            $habitatRepo = $this->getDoctrine()->getManager()->getRepository(Habitat::class)->find($habitat->id);
+            $nouAnimal->addHabitat($habitatRepo);
+        }
 
         $errors = $validator->validate($nouAnimal);
         if (count($errors) > 0) {
@@ -76,7 +92,11 @@ class AnimalController extends AbstractController
 
         $entityManager->flush();
 
-        return new JsonResponse(json_decode($serializer->serialize($nouAnimal, 'json')));
+        return new JsonResponse(json_decode($serializer->serialize($nouAnimal, 'json', [
+            'circular_reference_handler' => function ($object) {
+                return $object->getId();
+            }
+        ])));
     }
 
     /**
@@ -100,13 +120,23 @@ class AnimalController extends AbstractController
         $animal->setAltura($animalRequest->altura);
         $animal->setPes($animalRequest->pes);
 
+        $animal->removeAllHabitats();
+        foreach  ($animalRequest->habitats as $habitat){
+            $habitatRepo = $this->getDoctrine()->getManager()->getRepository(Habitat::class)->find($habitat->id);
+            $animal->addHabitat($habitatRepo);
+        }
+
         // tell Doctrine you want to (eventually) save the Product (no queries yet)
         $entityManager->persist($animal);
 
         // actually executes the queries (i.e. the INSERT query)
         $entityManager->flush();
 
-        return new JsonResponse(json_decode($serializer->serialize($animal, 'json')));
+        return new JsonResponse(json_decode($serializer->serialize($animal, 'json', [
+            'circular_reference_handler' => function ($object) {
+                return $object->getId();
+            }
+        ])));
     }
 
     /**
@@ -128,6 +158,10 @@ class AnimalController extends AbstractController
         // actually executes the queries (i.e. the INSERT query)
         $entityManager->flush();
 
-        return new JsonResponse(json_decode($serializer->serialize($animal, 'json')));
+        return new JsonResponse(json_decode($serializer->serialize($animal, 'json', [
+            'circular_reference_handler' => function ($object) {
+                return $object->getId();
+            }
+        ])));
     }
 }

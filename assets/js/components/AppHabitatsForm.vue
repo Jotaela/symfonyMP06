@@ -20,6 +20,16 @@
               v-model="updatedHabitat.descripcio"
               label="Descripció de l'habitat"
             />
+            <v-autocomplete
+              v-model="updatedHabitat.animals"
+              :items="animals"
+              return-object
+              :item-text="text"
+              dense
+              chips
+              label="Animals"
+              multiple
+            />
           </v-form>
         </v-container>
         <v-card-actions>
@@ -68,6 +78,10 @@ export default {
     show: {
       type: Boolean,
       required: true
+    },
+    animals: {
+      type: Array,
+      required: true
     }
   },
   data () {
@@ -82,9 +96,7 @@ export default {
     submit (habitat, updatedHabitat) {
       this.$emit('submited', habitat, updatedHabitat)
     },
-    prova () {
-      console.log(this.habitat)
-    }
+    text: item => item.id + ' — ' + item.name
   }
 }
 </script>

@@ -7,7 +7,7 @@
           <v-spacer />
           <v-btn @click="$emit('toggled')" icon>
             <v-icon>close</v-icon>
-          </v-btn>
+          </v-btn>.
         </v-toolbar>
         <v-container>
           <v-form ref="form" v-model="valid">
@@ -31,6 +31,7 @@
             <v-autocomplete
               v-model="updatedAnimal.habitats"
               :items="habitats"
+              return-object
               item-text="nom"
               dense
               chips
@@ -110,7 +111,6 @@ export default {
     eliminar (habitat) {
       this.updatedAnimal.habitat.splice(this.updatedAnimal.habitat.indexOf(habitat), 1)
     }
-
   }
 }
 </script>

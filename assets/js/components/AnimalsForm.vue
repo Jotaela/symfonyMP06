@@ -33,9 +33,6 @@ export default {
       }
     }
   },
-  created() {
-    this.$store.dispatch('habitats/' + types.HABITATS_REFRESH)
-  },
   computed: {
     habitats() {
       return this.$store.getters['habitats/list']
@@ -61,6 +58,7 @@ export default {
         this.loading = true
         if (animal.id === 0) {
           await this.$store.dispatch('animals/' + types.ANIMAL_STORE, newAnimal)
+          this.initAnimal()
         } else {
           const props = {
             animal,
@@ -69,7 +67,6 @@ export default {
           await this.$store.dispatch('animals/' + types.ANIMAL_UPDATE, props)
         }
         this.toggle()
-        this.initAnimal()
       } catch (error) {
         console.log(error)
       }
@@ -80,12 +77,12 @@ export default {
     },
     initAnimal () {
       this.updatedAnimal = {
-        id: this.animal.id,
-        name: this.animal.name,
-        especie: this.animal.especie,
-        altura: this.animal.altura,
-        pes: this.animal.pes,
-        habitats: this.animal.habitats
+        id: 0,
+        name: '',
+        especie: '',
+        altura: '',
+        pes: '',
+        habitats: []
       }
     }
   }

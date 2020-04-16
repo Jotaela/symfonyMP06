@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Animal;
 use App\Entity\Habitat;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -26,7 +27,11 @@ class HabitatController extends AbstractController
         $serializer = new Serializer($normalizers, $encoders);
 
         $repository  = $this->getDoctrine()->getManager()->getRepository(Habitat::class);
-        return new JsonResponse(json_decode($serializer->serialize($repository->findAll(), 'json')));
+        return new JsonResponse(json_decode($serializer->serialize($repository->findAll(), 'json', [
+            'circular_reference_handler' => function ($object) {
+                return $object->getId();
+            }
+        ])));
     }
 
     /**
@@ -40,7 +45,11 @@ class HabitatController extends AbstractController
         $normalizers = [new ObjectNormalizer()];
         $serializer = new Serializer($normalizers, $encoders);
 
-        return new JsonResponse(json_decode($serializer->serialize($habitat, 'json')));
+        return new JsonResponse(json_decode($serializer->serialize($habitat, 'json', [
+            'circular_reference_handler' => function ($object) {
+                return $object->getId();
+            }
+        ])));
     }
 
     /**
@@ -62,6 +71,10 @@ class HabitatController extends AbstractController
         $nouHabitat = new Habitat();
         $nouHabitat->setNom($habitatRequest->nom);
         $nouHabitat->setDescripcio($habitatRequest->descripcio);
+        foreach  ($habitatRequest->animals as $animal){
+            $animalRepo = $this->getDoctrine()->getManager()->getRepository(Animal::class)->find($animal->id);
+            $nouHabitat->addAnimal($animalRepo);
+        }
 
         $errors = $validator->validate($nouHabitat);
         if (count($errors) > 0) {
@@ -72,7 +85,11 @@ class HabitatController extends AbstractController
 
         $entityManager->flush();
 
-        return new JsonResponse(json_decode($serializer->serialize($nouHabitat, 'json')));
+        return new JsonResponse(json_decode($serializer->serialize($nouHabitat, 'json', [
+            'circular_reference_handler' => function ($object) {
+                return $object->getId();
+            }
+        ])));
     }
 
     /**
@@ -94,13 +111,24 @@ class HabitatController extends AbstractController
         $habitat->setNom($habitatRequest->nom);
         $habitat->setDescripcio($habitatRequest->descripcio);
 
+        $habitat->removeAllAnimals();
+
+        foreach  ($habitatRequest->animals as $animal){
+            $animalRepo = $this->getDoctrine()->getManager()->getRepository(Animal::class)->find($animal->id);
+            $habitat->addAnimal($animalRepo);
+        }
+
         // tell Doctrine you want to (eventually) save the Product (no queries yet)
         $entityManager->persist($habitat);
 
         // actually executes the queries (i.e. the INSERT query)
         $entityManager->flush();
 
-        return new JsonResponse(json_decode($serializer->serialize($habitat, 'json')));
+        return new JsonResponse(json_decode($serializer->serialize($habitat, 'json', [
+            'circular_reference_handler' => function ($object) {
+                return $object->getId();
+            }
+        ])));
     }
 
     /**
@@ -122,6 +150,10 @@ class HabitatController extends AbstractController
         // actually executes the queries (i.e. the INSERT query)
         $entityManager->flush();
 
-        return new JsonResponse(json_decode($serializer->serialize($habitat, 'json')));
+        return new JsonResponse(json_decode($serializer->serialize($habitat, 'json', [
+            'circular_reference_handler' => function ($object) {
+                return $object->getId();
+            }
+        ])));
     }
 }

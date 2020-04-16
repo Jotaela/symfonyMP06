@@ -92,4 +92,15 @@ class Habitat
 
         return $this;
     }
+
+    public function removeAllAnimals(): self
+    {
+        foreach ($this->getAnimals() as $animal) {
+            $this->removeAnimal($animal);
+        }
+
+        return $this;
+    }
+
+
 }

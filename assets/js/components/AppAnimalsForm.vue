@@ -32,7 +32,7 @@
               v-model="updatedAnimal.habitats"
               :items="habitats"
               return-object
-              item-text="nom"
+              :item-text="text"
               dense
               chips
               label="Habitats"
@@ -110,7 +110,8 @@ export default {
     },
     eliminar (habitat) {
       this.updatedAnimal.habitat.splice(this.updatedAnimal.habitat.indexOf(habitat), 1)
-    }
+    },
+    text: item => item.id + ' — ' + item.nom
   }
 }
 </script>

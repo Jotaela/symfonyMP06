@@ -3,6 +3,13 @@ Introducció:
 - Aquesta és una aplicació MVC i ha estat programada amb les tecnologies Symfony 5 per a la part servidor (API) i vue per a la part client.
 A part també hem de tindre en compte que sobre vue corre un framework de css que es diu Vuetify i que s'ha fet servir l'eina vuex per a gestionar la data de l'aplicació
 
+Requeriments:
+
+- php 7.2.x
+- npm
+- composer
+- symfony
+
 Setting up the project:
 
     composer install
